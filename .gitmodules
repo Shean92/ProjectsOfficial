@@ -1,0 +1,3 @@
+[submodule "Projects/phpmotors"]
+	path = Projects/phpmotors
+	url = https://github.com/Shean92/phpmotors.git
