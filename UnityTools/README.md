@@ -9,3 +9,7 @@ The controller is the main code overseeing how the base builder tool functions. 
 
 ### Phantom
 This is a small peice of code for the object when it is hovering and following the mouse. This script should only be active on one object at a time and should only be activated by the controller.
+
+### Discoveries
+#### Phantom vs Real objects
+Originally I had the controller requiring two identical objects when accepting structure prefabs: phantomStructure and Structure. I knew that this didn't feel right, but at the time it was the only way I knew. I needed to have an identical object appear slightly transparent and follow the mouse while leaving the real structure alone. I decided that I should be able to make a phantom object from the original structure prefab. While searching for solutions, I struggled to find code that did exactly what I was trying to do. I found code that taught me how to keep the reference of an instantiated object from a different script. After finding this new code, I knew that it was possible. I struggled further to find how to change the transparency of a referenced object. I learned about GetComponent<>() and that it can reference any property on an object, separate from the current script. I learned also that I can enable and disable scripts with this same function. This was fun for me to learn and I felt very satisfied after I finished this section.
