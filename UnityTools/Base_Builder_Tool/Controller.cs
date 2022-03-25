@@ -9,18 +9,17 @@ public class Controller : MonoBehaviour
     private int totalStructures;
     public float wheelThreshold;
     public float rotateSpeed;
+    public float transparency;
     public List<string> resources;
 
     [System.Serializable]
     public class Structure
     {
-        public GameObject phantomStructureObject;
         public GameObject structureObject;
         public int cost;
 
-        public Structure(GameObject structureObjectPhantom, GameObject structureObject)
+        public Structure(GameObject structureObject)
         {
-            this.phantomStructureObject = structureObjectPhantom;
             this.structureObject = structureObject;
         }
     };
@@ -32,29 +31,23 @@ public class Controller : MonoBehaviour
     {
         totalStructures = structureList.Count - 1;
         buildSelect = 0;
-        currentObject = (GameObject)GameObject.Instantiate(structureList[buildSelect].structureObject);
-        Color currentObjectTransparent = currentObject.GetComponent<SpriteRenderer>().color;
-        currentObjectTransparent.a = .21f;
-        currentObject.GetComponent<SpriteRenderer>().color = currentObjectTransparent;
+        MakePhantom();
     }
     private void Update()
     {
         if (Input.GetAxisRaw("Mouse ScrollWheel") > wheelThreshold)
         {
-            destroyPhantom();
+            DestroyPhantom();
             buildSelect++;
-            maintainBuildSelect();
-            currentObject = (GameObject)GameObject.Instantiate(structureList[buildSelect].structureObject);
-            Color currentObjectTransparent = currentObject.GetComponent<SpriteRenderer>().color;
-            currentObjectTransparent.a = .21f;
-            currentObject.GetComponent<SpriteRenderer>().color = currentObjectTransparent;
+            MaintainBuildSelect();
+            MakePhantom();
         }
         else if (Input.GetAxisRaw("Mouse ScrollWheel") < -wheelThreshold)
         {
-            destroyPhantom();
+            DestroyPhantom();
             buildSelect--;
-            maintainBuildSelect();
-            currentObject = (GameObject)GameObject.Instantiate(structureList[buildSelect].phantomStructureObject);
+            MaintainBuildSelect();
+            MakePhantom();
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -64,7 +57,7 @@ public class Controller : MonoBehaviour
             Vector3 objectPos = Camera.main.ScreenToWorldPoint(mousePos);
             objectPos.z = 0.0f;
             Quaternion currentRotation = currentObject.GetComponent<Transform>().rotation;
-            Instantiate(structureList[buildSelect].structureObject, objectPos, currentRotation);
+            PlaceStructure(objectPos, currentRotation);
         }
 
         if (Input.GetMouseButton(1))
@@ -73,13 +66,27 @@ public class Controller : MonoBehaviour
         }
     }
 
-    void maintainBuildSelect()
+    void MaintainBuildSelect()
     {
         if (buildSelect > totalStructures) buildSelect = 0;
         else if (buildSelect < 0) buildSelect = totalStructures;
     }
 
-    void destroyPhantom()
+    void PlaceStructure(Vector3 objectPos, Quaternion currentRotation)
+    {
+        Instantiate(structureList[buildSelect].structureObject, objectPos, currentRotation);
+    }
+
+    void MakePhantom()
+    {
+        currentObject = (GameObject)GameObject.Instantiate(structureList[buildSelect].structureObject);
+        Color currentObjectTransparent = currentObject.GetComponent<SpriteRenderer>().color;
+        currentObjectTransparent.a = transparency;
+        currentObject.GetComponent<SpriteRenderer>().color = currentObjectTransparent;
+        currentObject.GetComponent<PhantomStructure>().enabled = true;
+    }
+
+    void DestroyPhantom()
     {
         Destroy(currentObject);
     }
